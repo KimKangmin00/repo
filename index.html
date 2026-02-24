@@ -3,109 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Azure MSP System Monitoring</title>
+    <title>Azure MSP | System Monitoring</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-900 text-white font-sans">
+<body class="bg-[#0f172a] text-slate-200">
 
     <div class="flex h-screen overflow-hidden">
-        <aside class="w-64 bg-slate-800 p-6 flex flex-col border-r border-slate-700">
-            <h1 class="text-2xl font-bold text-blue-400 mb-10 tracking-tight">Azure MSP</h1>
-            <nav class="space-y-4 flex-1">
-                <a href="#" class="flex items-center space-x-3 text-blue-400 bg-slate-700 p-3 rounded-lg"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
-                <a href="#" class="flex items-center space-x-3 text-slate-400 hover:text-white p-3"><i class="fas fa-server"></i> <span>Resources</span></a>
-                <a href="#" class="flex items-center space-x-3 text-slate-400 hover:text-white p-3"><i class="fas fa-bell"></i> <span>Incidents</span></a>
-                <a href="#" class="flex items-center space-x-3 text-slate-400 hover:text-white p-3"><i class="fas fa-chart-line"></i> <span>Reports</span></a>
+        <aside class="w-72 bg-[#1e293b] p-6 flex flex-col border-r border-slate-700">
+            <div class="flex items-center mb-10 space-x-3">
+                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-cloud text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight">Azure MSP Portal</h1>
+            </div>
+            <nav class="space-y-2 flex-1">
+                <a href="#" class="flex items-center space-x-3 bg-blue-600/20 text-blue-400 p-3 rounded-xl border border-blue-500/30">
+                    <i class="fas fa-desktop w-5"></i> <span>시스템 모니터링</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 text-slate-400 hover:bg-slate-700/50 p-3 rounded-xl transition">
+                    <i class="fas fa-file-invoice-dollar w-5"></i> <span>비용 관리</span>
+                </a>
             </nav>
-            <div class="text-xs text-slate-500 border-t border-slate-700 pt-4">© 2024 MSP Monitor Team</div>
+            <div class="pt-6 border-t border-slate-700">
+                <p class="text-xs text-slate-500 leading-relaxed">Logged in as:<br><span class="text-slate-300">kmkim@cnthoth.com</span></p>
+            </div>
         </aside>
 
-        <main class="flex-1 p-8 overflow-y-auto">
-            <header class="flex justify-between items-center mb-10">
+        <main class="flex-1 p-10 overflow-y-auto">
+            <header class="flex justify-between items-end mb-10">
                 <div>
-                    <h2 class="text-3xl font-semibold">Global System Overview</h2>
-                    <p class="text-slate-400">실시간 시스템 가동 현황 및 주요 지표</p>
+                    <h2 class="text-3xl font-bold text-white mb-2">실시간 리소스 현황</h2>
+                    <p class="text-slate-400">Microsoft Azure(AI Platform팀 2026년) 스폰서십 기반</p>
                 </div>
-                <div class="flex space-x-4">
-                    <span class="bg-green-500/10 text-green-500 border border-green-500/20 px-4 py-2 rounded-full text-sm">● All Services Operational</span>
-                    <button class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg transition">수동 동기화</button>
+                <div id="sync-status" class="text-sm px-4 py-2 bg-slate-800 rounded-full border border-slate-700 text-slate-400">
+                    <i class="fas fa-sync-alt fa-spin mr-2"></i> 데이터 동기화 중...
                 </div>
             </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                    <p class="text-slate-400 text-sm">Managed Subscriptions</p>
-                    <h3 class="text-3xl font-bold mt-2">12 <span class="text-sm font-normal text-slate-500">Active</span></h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-[#1e293b] p-6 rounded-2xl border border-slate-700 shadow-xl">
+                    <div class="text-slate-400 text-sm mb-1">총 관리 VM</div>
+                    <div class="text-3xl font-bold text-white">6 <span class="text-sm font-normal text-slate-500 ml-1 italic">Nodes</span></div>
                 </div>
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 border-l-4 border-l-red-500">
-                    <p class="text-slate-400 text-sm">Critical Alerts</p>
-                    <h3 class="text-3xl font-bold mt-2 text-red-500">03 <span class="text-sm font-normal text-slate-500 text-white">Unresolved</span></h3>
+                <div class="bg-[#1e293b] p-6 rounded-2xl border border-slate-700 shadow-xl">
+                    <div class="text-slate-400 text-sm mb-1">활성 경보</div>
+                    <div id="alert-count" class="text-3xl font-bold text-green-500 text-white">0</div>
                 </div>
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                    <p class="text-slate-400 text-sm">Avg. CPU Usage</p>
-                    <h3 class="text-3xl font-bold mt-2">34.2 <span class="text-sm font-normal text-slate-500">%</span></h3>
-                </div>
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                    <p class="text-slate-400 text-sm">SLA Target (MTD)</p>
-                    <h3 class="text-3xl font-bold mt-2 text-blue-400">99.98 <span class="text-sm font-normal text-slate-500">%</span></h3>
+                <div class="bg-[#1e293b] p-6 rounded-2xl border border-slate-700 shadow-xl border-t-4 border-t-blue-500">
+                    <div class="text-slate-400 text-sm mb-1">평균 응답 시간</div>
+                    <div class="text-3xl font-bold text-blue-400">12.5 <span class="text-sm font-normal text-slate-500 ml-1">ms</span></div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                    <h4 class="text-lg font-medium mb-4">Traffic & Performance Trend</h4>
-                    <canvas id="performanceChart" height="150"></canvas>
+            <div class="bg-[#1e293b] rounded-2xl border border-slate-700 shadow-xl overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
+                    <h3 class="font-semibold text-white text-lg">가상 머신 인벤토리</h3>
+                    <span class="text-xs text-slate-500 font-mono tracking-widest">AUTO REFRESH: 1 MIN</span>
                 </div>
-                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                    <h4 class="text-lg font-medium mb-4 text-orange-400">Recent Incidents</h4>
-                    <ul class="space-y-4">
-                        <li class="flex items-start space-x-3 p-3 bg-slate-900/50 rounded-lg border-l-2 border-red-500">
-                            <div class="text-red-500 mt-1"><i class="fas fa-exclamation-circle"></i></div>
-                            <div>
-                                <p class="text-sm font-semibold italic">[VM-SQL-01] CPU Overload</p>
-                                <span class="text-xs text-slate-500">10분 전 발생</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start space-x-3 p-3 bg-slate-900/50 rounded-lg border-l-2 border-yellow-500">
-                            <div class="text-yellow-500 mt-1"><i class="fas fa-exclamation-triangle"></i></div>
-                            <div>
-                                <p class="text-sm font-semibold">Network Latency High - US East</p>
-                                <span class="text-xs text-slate-500">1시간 전 발생</span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                <table class="w-full text-left">
+                    <thead class="bg-slate-800/30 text-slate-400 text-xs uppercase tracking-wider">
+                        <tr>
+                            <th class="px-6 py-4 font-semibold">VM 이름</th>
+                            <th class="px-6 py-4 font-semibold text-center">리소스 그룹</th>
+                            <th class="px-6 py-4 font-semibold text-right">CPU 사용률</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vm-list-body" class="divide-y divide-slate-700">
+                        <tr><td colspan="3" class="px-6 py-10 text-center text-slate-500 italic">데이터를 불러오는 중입니다...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>
 
     <script>
-        // Chart.js를 이용한 더미 데이터 시각화
-        const ctx = document.getElementById('performanceChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-                datasets: [{
-                    label: 'CPU Usage (%)',
-                    data: [20, 15, 45, 80, 50, 30],
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
-                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                }
+        // 1. Azure 설정 정보 (첨부 이미지 및 요청 데이터 반영)
+        const azureConfig = {
+            tenantId: "979a7dc6-1c5f-49bd-a265-609daf66e3d2",
+            clientId: "7d520e5c-b0b2-4638-a7b4-168e9b3b3cc9",
+            //clientSecret: "grQ8Q~2n1iFDjeuXcP3wjeddhtJsBJcL23.9fdk3",
+            clientSecret: "",
+            subscriptionId: "122a2e7e-7d1a-4b2d-a26c-0a156dfa583c",
+            vms: [
+                { name: "co-testvm-redhat-8.10", rg: "cosyj_RG" },
+                { name: "co-testvm-redhat-8.10-01", rg: "cosyj_RG" },
+                { name: "co-testvm-redhat-8.6", rg: "cosyj_RG" },
+                { name: "jy-test-vm", rg: "jypark_RG" },
+                { name: "Mintest01", rg: "RG-MIN" },
+                { name: "vm-wemade-work-01", rg: "rg-wemade" }
+            ]
+        };
+
+        // 2. Azure 토큰 획득
+        async function getAccessToken() {
+            const url = `https://login.microsoftonline.com/${azureConfig.tenantId}/oauth2/v2.0/token`;
+            const params = new URLSearchParams({
+                client_id: azureConfig.clientId,
+                client_secret: azureConfig.clientSecret,
+                grant_type: 'client_credentials',
+                scope: 'https://management.azure.com/.default'
+            });
+
+            const response = await fetch(url, { method: 'POST', body: params });
+            const data = await response.json();
+            return data.access_token;
+        }
+
+        // 3. 개별 VM CPU 조회 (Latest 5 min)
+        async function getVmCpu(token, vm) {
+            const endpoint = `https://management.azure.com/subscriptions/${azureConfig.subscriptionId}/resourceGroups/${vm.rg}/providers/Microsoft.Compute/virtualMachines/${vm.name}/providers/Microsoft.Insights/metrics?api-version=2018-01-01&metricnames=Percentage CPU&timespan=PT1H&interval=PT5M`;
+            
+            try {
+                const response = await fetch(endpoint, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                const metrics = data.value[0].timeseries[0].data;
+                const latestValue = metrics[metrics.length - 1].average;
+                return latestValue !== undefined ? latestValue.toFixed(2) : "0.00";
+            } catch (err) {
+                return "OFF"; // 중지된 상태이거나 조회 불가 시
             }
-        });
+        }
+
+        // 4. 화면 업데이트
+        async function updateDashboard() {
+            document.getElementById('sync-status').innerHTML = '<i class="fas fa-sync-alt fa-spin mr-2"></i> 동기화 중...';
+            
+            try {
+                const token = await getAccessToken();
+                const tbody = document.getElementById('vm-list-body');
+                tbody.innerHTML = ""; // 초기화
+
+                // 모든 VM 데이터 병렬 조회
+                const results = await Promise.all(azureConfig.vms.map(async (vm) => {
+                    const cpu = await getVmCpu(token, vm);
+                    return { ...vm, cpu };
+                }));
+
+                results.forEach(vm => {
+                    const cpuNum = parseFloat(vm.cpu);
+                    let colorClass = "text-blue-400";
+                    if (cpuNum > 80) colorClass = "text-red-500 font-bold";
+                    else if (vm.cpu === "OFF") colorClass = "text-slate-600";
+
+                    const row = `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="px-6 py-4 font-medium text-white">
+                                <i class="fas fa-server mr-2 text-slate-500"></i> ${vm.name}
+                            </td>
+                            <td class="px-6 py-4 text-center text-slate-400 text-sm">
+                                ${vm.rg}
+                            </td>
+                            <td class="px-6 py-4 text-right ${colorClass} font-mono">
+                                ${vm.cpu === "OFF" ? "DEALLOCATED" : vm.cpu + " %"}
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+
+                document.getElementById('sync-status').innerHTML = '<i class="fas fa-check-circle text-green-500 mr-2"></i> 동기화 완료';
+            } catch (error) {
+                console.error("Dashboard Update Error:", error);
+                document.getElementById('sync-status').innerHTML = '<i class="fas fa-exclamation-triangle text-red-500 mr-2"></i> 연결 오류';
+            }
+        }
+
+        // 초기 실행 및 60초 간격 갱신
+        updateDashboard();
+        setInterval(updateDashboard, 60000);
     </script>
 </body>
 </html>
